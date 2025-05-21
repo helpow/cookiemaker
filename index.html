@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cookie Demo</title>
+</head>
+<body>
+  <h1>Cookie Demo</h1>
+  <p id="cookieInfo"></p>
+  <button onclick="setCookie('username', 'ChatGPT', 7)">Set Cookie</button>
+  <button onclick="getCookie('username')">Show Cookie</button>
+  <button onclick="deleteCookie('username')">Delete Cookie</button>
+
+  <script>
+    // Set a cookie
+    function setCookie(name, value, days) {
+      const d = new Date();
+      d.setTime(d.getTime() + (days*24*60*60*1000));
+      const expires = "expires=" + d.toUTCString();
+      document.cookie = name + "=" + value + ";" + expires + ";path=/";
+      document.getElementById("cookieInfo").textContent = `Cookie '${name}' set.`;
+    }
+
+    // Get a cookie
+    function getCookie(name) {
+      const decodedCookie = decodeURIComponent(document.cookie);
+      const cookies = decodedCookie.split(';');
+      for (let c of cookies) {
+        while (c.charAt(0) === ' ') c = c.substring(1);
+        if (c.indexOf(name + "=") === 0) {
+          document.getElementById("cookieInfo").textContent = `Cookie '${name}' value: ${c.substring(name.length + 1)}`;
+          return;
+        }
+      }
+      document.getElementById("cookieInfo").textContent = `Cookie '${name}' not found.`;
+    }
+
+    // Delete a cookie
+    function deleteCookie(name) {
+      document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.getElementById("cookieInfo").textContent = `Cookie '${name}' deleted.`;
+    }
+  </script>
+</body>
+</html>
