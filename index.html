@@ -2,30 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Cookie Demo</title>
+  <title>Cookie Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input {
+      margin: 5px;
+    }
+    table {
+      margin-top: 10px;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 5px 10px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Cookie Demo</h1>
+  <h1>Cookie Manager</h1>
 
-  <label for="cookieName">Cookie Name:</label>
-  <input type="text" id="cookieName" placeholder="Enter cookie name">
-
-  <label for="cookieValue">Cookie Value:</label>
-  <input type="text" id="cookieValue" placeholder="Enter cookie value">
-
-  <br><br>
+  <input type="text" id="cookieName" placeholder="Cookie Name">
+  <input type="text" id="cookieValue" placeholder="Cookie Value">
+  <br>
   <button onclick="handleSetCookie()">Set Cookie</button>
   <button onclick="handleGetCookie()">Get Cookie</button>
   <button onclick="handleDeleteCookie()">Delete Cookie</button>
+  <button onclick="displayAllCookies()">Show All Cookies</button>
 
   <p id="cookieInfo"></p>
+  <table id="cookieTable"></table>
 
   <script>
     function setCookie(name, value, days) {
       const d = new Date();
-      d.setTime(d.getTime() + (days*24*60*60*1000));
+      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
       const expires = "expires=" + d.toUTCString();
-      document.cookie = `${name}=${value};${expires};path=/`;
+      document.cookie = `${name}=${value}; ${expires}; path=/`;
     }
 
     function getCookie(name) {
@@ -41,12 +56,12 @@
     }
 
     function deleteCookie(name) {
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
     }
 
     function handleSetCookie() {
-      const name = document.getElementById('cookieName').value;
-      const value = document.getElementById('cookieValue').value;
+      const name = document.getElementById('cookieName').value.trim();
+      const value = document.getElementById('cookieValue').value.trim();
       if (!name || !value) {
         document.getElementById("cookieInfo").textContent = "Please enter both name and value.";
         return;
@@ -56,27 +71,39 @@
     }
 
     function handleGetCookie() {
-      const name = document.getElementById('cookieName').value;
+      const name = document.getElementById('cookieName').value.trim();
       if (!name) {
-        document.getElementById("cookieInfo").textContent = "Please enter cookie name.";
+        document.getElementById("cookieInfo").textContent = "Please enter a cookie name.";
         return;
       }
       const value = getCookie(name);
-      if (value !== null) {
-        document.getElementById("cookieInfo").textContent = `Cookie '${name}' value: ${value}`;
-      } else {
-        document.getElementById("cookieInfo").textContent = `Cookie '${name}' not found.`;
-      }
+      document.getElementById("cookieInfo").textContent = value
+        ? `Cookie '${name}' value: ${value}`
+        : `Cookie '${name}' not found.`;
     }
 
     function handleDeleteCookie() {
-      const name = document.getElementById('cookieName').value;
+      const name = document.getElementById('cookieName').value.trim();
       if (!name) {
-        document.getElementById("cookieInfo").textContent = "Please enter cookie name.";
+        document.getElementById("cookieInfo").textContent = "Please enter a cookie name.";
         return;
       }
       deleteCookie(name);
       document.getElementById("cookieInfo").textContent = `Cookie '${name}' deleted.`;
+    }
+
+    function displayAllCookies() {
+      const table = document.getElementById('cookieTable');
+      const cookies = document.cookie.split(';');
+      table.innerHTML = cookies.length ? '<tr><th>Name</th><th>Value</th></tr>' : '<tr><td>No cookies found</td></tr>';
+      for (let cookie of cookies) {
+        let [name, ...rest] = cookie.split('=');
+        name = name.trim();
+        const value = rest.join('=');
+        if (name) {
+          table.innerHTML += `<tr><td>${name}</td><td>${value}</td></tr>`;
+        }
+      }
     }
   </script>
 </body>
