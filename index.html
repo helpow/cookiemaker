@@ -6,38 +6,76 @@
 </head>
 <body>
   <h1>Cookie Demo</h1>
+
+  <label for="cookieName">Cookie Name:</label>
+  <input type="text" id="cookieName" placeholder="Enter cookie name">
+
+  <label for="cookieValue">Cookie Value:</label>
+  <input type="text" id="cookieValue" placeholder="Enter cookie value">
+
+  <br><br>
+  <button onclick="handleSetCookie()">Set Cookie</button>
+  <button onclick="handleGetCookie()">Get Cookie</button>
+  <button onclick="handleDeleteCookie()">Delete Cookie</button>
+
   <p id="cookieInfo"></p>
-  <button onclick="setCookie('username', 'ChatGPT', 7)">Set Cookie</button>
-  <button onclick="getCookie('username')">Show Cookie</button>
-  <button onclick="deleteCookie('username')">Delete Cookie</button>
 
   <script>
-    // Set a cookie
     function setCookie(name, value, days) {
       const d = new Date();
       d.setTime(d.getTime() + (days*24*60*60*1000));
       const expires = "expires=" + d.toUTCString();
-      document.cookie = name + "=" + value + ";" + expires + ";path=/";
-      document.getElementById("cookieInfo").textContent = `Cookie '${name}' set.`;
+      document.cookie = `${name}=${value};${expires};path=/`;
     }
 
-    // Get a cookie
     function getCookie(name) {
       const decodedCookie = decodeURIComponent(document.cookie);
       const cookies = decodedCookie.split(';');
       for (let c of cookies) {
         while (c.charAt(0) === ' ') c = c.substring(1);
         if (c.indexOf(name + "=") === 0) {
-          document.getElementById("cookieInfo").textContent = `Cookie '${name}' value: ${c.substring(name.length + 1)}`;
-          return;
+          return c.substring(name.length + 1);
         }
       }
-      document.getElementById("cookieInfo").textContent = `Cookie '${name}' not found.`;
+      return null;
     }
 
-    // Delete a cookie
     function deleteCookie(name) {
-      document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    }
+
+    function handleSetCookie() {
+      const name = document.getElementById('cookieName').value;
+      const value = document.getElementById('cookieValue').value;
+      if (!name || !value) {
+        document.getElementById("cookieInfo").textContent = "Please enter both name and value.";
+        return;
+      }
+      setCookie(name, value, 7);
+      document.getElementById("cookieInfo").textContent = `Cookie '${name}' set.`;
+    }
+
+    function handleGetCookie() {
+      const name = document.getElementById('cookieName').value;
+      if (!name) {
+        document.getElementById("cookieInfo").textContent = "Please enter cookie name.";
+        return;
+      }
+      const value = getCookie(name);
+      if (value !== null) {
+        document.getElementById("cookieInfo").textContent = `Cookie '${name}' value: ${value}`;
+      } else {
+        document.getElementById("cookieInfo").textContent = `Cookie '${name}' not found.`;
+      }
+    }
+
+    function handleDeleteCookie() {
+      const name = document.getElementById('cookieName').value;
+      if (!name) {
+        document.getElementById("cookieInfo").textContent = "Please enter cookie name.";
+        return;
+      }
+      deleteCookie(name);
       document.getElementById("cookieInfo").textContent = `Cookie '${name}' deleted.`;
     }
   </script>
